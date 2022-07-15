@@ -45,7 +45,7 @@ inputs:
       Whether to staple product or not
       Should either be true or false
     required: false
-    default: true
+    default: "true"
 runs:
   using: "composite"
   steps:
@@ -63,36 +63,24 @@ runs:
         issuer_id = "${{ inputs.issuer-id }}"
         if package_path[-4:] == ".app":
             print("Product is an app folder, creating temporary zip...")
-            os.system(
-                "ditto -c -k --sequesterRsrc --keepParent " +
-                package_path + " " + temp_file_path
-            )
+            os.system("ditto -c -k --sequesterRsrc --keepParent " + package_path + " " + temp_file_path)
         else:
             temp_file_path = package_path
         notarize_command = "xcrun notarytool submit " + temp_file_path + \
-        " --output-format json --wait"
-        ' --apple-id "${{ inputs.apple-id }}"'
-        ' --password "${{ inputs.app-password }}"'
-        ' --team-id "${{ inputs.team-id }}"'
+                           " --output-format json --wait" + \
+                           ' --apple-id "${{ inputs.apple-id }}"' + \
+                           ' --password "${{ inputs.app-password }}"' + \
+                           ' --team-id "${{ inputs.team-id }}"'
         print("Submitting with notarytool...")
         if key_base64 and key_id and issuer_id:
             print("Using API key, creating temp p8 file...")
-            os.system(
-                'echo -n "' + key_base64 + 
-                '" | base64 --decode --output' + temp_key_path
-            )
+            os.system('echo -n "' + key_base64 + '" | base64 --decode --output' + temp_key_path)
             notarize_command = "xcrun notarytool submit " + temp_file_path + \
-            " --output-format json --wait"
-            ' -k ' + temp_key_path + \
-            ' -d ' + key_id + \
-            ' -i ' + issuer_id
-        result = json.loads(
-            subprocess.run(
-                notarize_command,
-                stdout=subprocess.PIPE,
-                shell=True
-            ).stdout.decode('utf-8')
-        )
+                               " --output-format json --wait" + \
+                               ' -k ' + temp_key_path + \
+                               ' -d ' + key_id + \
+                               ' -i ' + issuer_id
+        result = json.loads(subprocess.run(notarize_command, stdout=subprocess.PIPE, shell=True).stdout.decode('utf-8'))
         print("Notarization response:")
         print(result)
         if result["status"] == "Accepted":
