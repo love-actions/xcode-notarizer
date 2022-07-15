@@ -8,6 +8,8 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
 
 ## Quick example
 
+### Submit with Apple ID and app password
+
 ```yaml
 - name: Notarize product
   uses: 26F-Studio/xcode-notarizer@main
@@ -19,6 +21,19 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
     staple: false
 ```
 
+### Submit with App Store Connect API key
+
+```yaml
+- name: Notarize product
+  uses: 26F-Studio/xcode-notarizer@main
+  with:
+    product-path: ./dist/my_app.app
+    key-base64: ${{ secrets.API_KEY }}
+    key-id: ${{ secrets.API_ID }}
+    issuer-id: ${{ secrets.ISSUER_ID }}
+    staple: false
+```
+
 ## All inputs
 
 | Name           | Required | Default  | Description                                            |
@@ -27,4 +42,7 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
 | `apple-id`     | `false`  | `""`     | Apple ID of the product's developer                    |
 | `app-password` | `false`  | `""`     | App specific password of the product                   |
 | `team-id`      | `false`  | `""`     | Developer team ID of the product                       |
+| `key-base64`   | `false`  | `""`     | Base64 content of the App Store Connect API key        |
+| `key-id`       | `false`  | `""`     | ID of the App Store Connect API key                    |
+| `issuer-id`    | `false`  | `""`     | ID of the App Store Connect API issuer                 |
 | `staple`       | `false`  | `"true"` | Whether to staple product or not                       |
