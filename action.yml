@@ -40,7 +40,7 @@ runs:
         import json
         import os
         import subprocess
-        package_path = "${{ inputs.package-path }}"
+        package_path = "${{ inputs.product-path }}"
         temp_file_path = "${{ runner.temp }}/temp_for_notarize.zip"
         if package_path[-4:] == ".app":
             print("Product is an app folder, creating temporary zip...")
