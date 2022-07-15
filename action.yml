@@ -25,6 +25,12 @@ inputs:
       Developer team ID of the product
       should also specify apple-id and app-password
     required: false
+  staple:
+    description: |
+      Whether to staple product or not
+      Should either be true or false
+    required: false
+    default: true
 runs:
   using: "composite"
   steps:
@@ -34,27 +40,38 @@ runs:
         import json
         import os
         import subprocess
-        temp_filename = './forNotarize.zip'
-        os.system(
-            'ditto -c -k --sequesterRsrc --keepParent '
-            './${{ inputs.product-name }}.app ' +
-            temp_filename
-        )
+        package_path = "${{ inputs.package-path }}"
+        temp_file_path = "${{ runner.temp }}/temp_for_notarize.zip"
+        if package_path[-4:] == ".app":
+            print("Creating temporary zip...")
+            os.system(
+                "ditto -c -k --sequesterRsrc --keepParent " +
+                package_path + " " + temp_file_path
+            )
+        else:
+            temp_file_path = package_path
         result = json.loads(
+            print("Submitting with notarytool...")
             subprocess.run(
-                'xcrun notarytool submit ' + temp_filename +
-                ' --output-format json --wait'
-                ' --apple-id "${{ inputs.account-username }}"'
-                ' --password "${{ inputs.account-password }}"'
+                "xcrun notarytool submit " + temp_file_path +
+                " --output-format json --wait"
+                ' --apple-id "${{ inputs.apple-id }}"'
+                ' --password "${{ inputs.app-password }}"'
                 ' --team-id "${{ inputs.team-id }}"',
                 stdout=subprocess.PIPE,
                 shell=True
             ).stdout.decode('utf-8')
         )
+        print("Notarization response:")
         print(result)
-        if result['status'] == 'Accepted':
-            os.system('xcrun stapler staple ./${{ inputs.product-name }}.app')
-            os.remove(temp_filename)
+        if result["status"] == "Accepted":
+            if "${{ inputs.staple }}" != "false"
+                print("Staple product...")
+                os.system("xcrun stapler staple " + package_path)
+            if package_path[-4:] == ".app":
+                print("Deleting temporary zip...")
+                os.remove(temp_file_path)
+            print("Notarization succeeded!")
         else:
-            print('Notarization failed: ' + result['message'])
+            print("Notarization failed: " + result["message"])
             exit(1)
