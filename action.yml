@@ -1,15 +1,30 @@
-name: Love actions for macOS portable
-description: macOS portable CI/CD for LÖVE based games
+name: Xcode notarizer
+description: Notarize Xcode products using notarytool
 branding:
   icon: "heart"
   color: "purple"
 inputs:
-  app-name:
+  product-path:
     description: |
-      App display name
-      Would be used in platform/xcode/macosx/love-macosx.plist
+      Path to the product
+      Support .app, .dmg and .pkg
+      Would create temporary .zip file if using .app product
+    required: true
+  apple-id:
+    description: |
+      Apple ID of the developer
+      should also specify app-password and team-id
     required: false
-    default: "LÖVE for macOS"
+  app-password:
+    description: |
+      App specific password of the product
+      should also specify apple-id and team-id
+    required: false
+  team-id:
+    description: |
+      Developer team ID of the product
+      should also specify apple-id and app-password
+    required: false
 runs:
   using: "composite"
   steps:
