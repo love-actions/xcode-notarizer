@@ -25,6 +25,21 @@ inputs:
       Developer team ID of the product
       should also specify apple-id and app-password
     required: false
+  key-base64:
+    description: |
+      Base64 content of the App Store Connect API key
+      should also specify key-id and issuer-id
+    required: false
+  key-id:
+    description: |
+      ID of the App Store Connect API key
+      should also specify key-base64 and issuer-id
+    required: false
+  issuer-id:
+    description: |
+      ID of the App Store Connect API issuer
+      should also specify key-base64 and key-id
+    required: false
   staple:
     description: |
       Whether to staple product or not
