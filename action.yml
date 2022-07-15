@@ -50,8 +50,8 @@ runs:
             )
         else:
             temp_file_path = package_path
+        print("Submitting with notarytool...")
         result = json.loads(
-            print("Submitting with notarytool...")
             subprocess.run(
                 "xcrun notarytool submit " + temp_file_path +
                 " --output-format json --wait"
