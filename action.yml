@@ -65,7 +65,7 @@ runs:
         print("Notarization response:")
         print(result)
         if result["status"] == "Accepted":
-            if "${{ inputs.staple }}" != "false"
+            if "${{ inputs.staple }}" != "false":
                 print("Stapling product...")
                 os.system("xcrun stapler staple " + package_path)
             if package_path[-4:] == ".app":
