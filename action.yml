@@ -58,6 +58,7 @@ runs:
         package_path = "${{ inputs.product-path }}"
         temp_file_path = "${{ runner.temp }}/temp_for_notarize.zip"
         key_base64 = "${{ inputs.key-base64 }}"
+        temp_key_path = "${{ runner.temp }}/temp_api_key.p8"
         key_id = "${{ inputs.key-id }}"
         issuer_id = "${{ inputs.issuer-id }}"
         if package_path[-4:] == ".app":
@@ -68,16 +69,26 @@ runs:
             )
         else:
             temp_file_path = package_path
+        notarize_command = "xcrun notarytool submit " + temp_file_path + \
+        " --output-format json --wait"
+        ' --apple-id "${{ inputs.apple-id }}"'
+        ' --password "${{ inputs.app-password }}"'
+        ' --team-id "${{ inputs.team-id }}"'
         print("Submitting with notarytool...")
         if key_base64 and key_id and issuer_id:
-            os.system("")
+            print("Using API key, creating temp p8 file...")
+            os.system(
+                'echo -n "' + key_base64 + 
+                '" | base64 --decode --output' + temp_key_path
+            )
+            notarize_command = "xcrun notarytool submit " + temp_file_path + \
+            " --output-format json --wait"
+            ' -k ' + temp_key_path + \
+            ' -d ' + key_id + \
+            ' -i ' + issuer_id
         result = json.loads(
             subprocess.run(
-                "xcrun notarytool submit " + temp_file_path +
-                " --output-format json --wait"
-                ' --apple-id "${{ inputs.apple-id }}"'
-                ' --password "${{ inputs.app-password }}"'
-                ' --team-id "${{ inputs.team-id }}"',
+                notarize_command,
                 stdout=subprocess.PIPE,
                 shell=True
             ).stdout.decode('utf-8')
@@ -91,6 +102,9 @@ runs:
             if package_path[-4:] == ".app":
                 print("Deleting temporary zip...")
                 os.remove(temp_file_path)
+            if key_base64 and key_id and issuer_id:
+                print("Deleting temp p8 file...")
+                os.remove(temp_key_path)
             print("Notarization succeeded!")
         else:
             print("Notarization failed: " + result["message"])
