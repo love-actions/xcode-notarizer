@@ -1,8 +1,8 @@
 name: Xcode notarizer
 description: Notarize Xcode products using notarytool
 branding:
-  icon: "heart"
-  color: "purple"
+  icon: "check-circle"
+  color: "green"
 inputs:
   product-path:
     description: |
