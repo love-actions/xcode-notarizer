@@ -57,6 +57,9 @@ runs:
         import subprocess
         package_path = "${{ inputs.product-path }}"
         temp_file_path = "${{ runner.temp }}/temp_for_notarize.zip"
+        key_base64 = "${{ inputs.key-base64 }}"
+        key_id = "${{ inputs.key-id }}"
+        issuer_id = "${{ inputs.issuer-id }}"
         if package_path[-4:] == ".app":
             print("Product is an app folder, creating temporary zip...")
             os.system(
@@ -66,6 +69,8 @@ runs:
         else:
             temp_file_path = package_path
         print("Submitting with notarytool...")
+        if key_base64 and key_id and issuer_id:
+            os.system("")
         result = json.loads(
             subprocess.run(
                 "xcrun notarytool submit " + temp_file_path +
