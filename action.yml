@@ -1,0 +1,45 @@
+name: Love actions for macOS portable
+description: macOS portable CI/CD for LÖVE based games
+branding:
+  icon: "heart"
+  color: "purple"
+inputs:
+  app-name:
+    description: |
+      App display name
+      Would be used in platform/xcode/macosx/love-macosx.plist
+    required: false
+    default: "LÖVE for macOS"
+runs:
+  using: "composite"
+  steps:
+    - name: Notarize application bundle
+      shell: python3 {0}
+      run: |
+        import json
+        import os
+        import subprocess
+        temp_filename = './forNotarize.zip'
+        os.system(
+            'ditto -c -k --sequesterRsrc --keepParent '
+            './${{ inputs.product-name }}.app ' +
+            temp_filename
+        )
+        result = json.loads(
+            subprocess.run(
+                'xcrun notarytool submit ' + temp_filename +
+                ' --output-format json --wait'
+                ' --apple-id "${{ inputs.account-username }}"'
+                ' --password "${{ inputs.account-password }}"'
+                ' --team-id "${{ inputs.team-id }}"',
+                stdout=subprocess.PIPE,
+                shell=True
+            ).stdout.decode('utf-8')
+        )
+        print(result)
+        if result['status'] == 'Accepted':
+            os.system('xcrun stapler staple ./${{ inputs.product-name }}.app')
+            os.remove(temp_filename)
+        else:
+            print('Notarization failed: ' + result['message'])
+            exit(1)
