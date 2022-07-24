@@ -25,19 +25,19 @@ inputs:
       Developer team ID of the product
       should also specify apple-id and app-password
     required: false
-  key-base64:
+  key-content:
     description: |
-      Base64 content of the App Store Connect API key
+      App Store Connect API key content
       should also specify key-id and issuer-id
     required: false
   key-id:
     description: |
-      ID of the App Store Connect API key
+      App Store Connect API key ID
       should also specify key-base64 and issuer-id
     required: false
   issuer-id:
     description: |
-      ID of the App Store Connect API issuer
+      App Store Connect API issuer ID
       should also specify key-base64 and key-id
     required: false
   staple:
@@ -57,7 +57,7 @@ runs:
         import subprocess
         package_path = "${{ inputs.product-path }}"
         temp_file_path = "${{ runner.temp }}/temp_for_notarize.zip"
-        key_base64 = "${{ inputs.key-base64 }}"
+        key_content = "${{ inputs.key-content }}"
         temp_key_path = "${{ runner.temp }}/temp_api_key.p8"
         key_id = "${{ inputs.key-id }}"
         issuer_id = "${{ inputs.issuer-id }}"
@@ -72,9 +72,9 @@ runs:
                            ' --password "${{ inputs.app-password }}"' + \
                            ' --team-id "${{ inputs.team-id }}"'
         print("Submitting with notarytool...")
-        if key_base64 and key_id and issuer_id:
+        if key_content and key_id and issuer_id:
             print("Using API key, creating temp p8 file...")
-            os.system('echo -n "' + key_base64 + '" | base64 --decode --output' + temp_key_path)
+            os.system('echo -n "' + key_content + '" > ' + temp_key_path)
             notarize_command = "xcrun notarytool submit " + temp_file_path + \
                                " --output-format json --wait" + \
                                ' -k ' + temp_key_path + \
