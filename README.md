@@ -12,7 +12,7 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
 
 ```yaml
 - name: Notarize product
-  uses: 26F-Studio/xcode-notarizer@main
+  uses: love-actions/xcode-notarizer@v1
   with:
     product-path: ./dist/my_app.app
     apple-id: ${{ secrets.APPLE_ID }}
