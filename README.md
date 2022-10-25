@@ -25,7 +25,7 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
 
 ```yaml
 - name: Notarize product
-  uses: 26F-Studio/xcode-notarizer@main
+  uses: love-action/xcode-notarizer@v1
   with:
     product-path: ./dist/my_app.app
     key-content: ${{ secrets.API_KEY }}
@@ -36,13 +36,13 @@ This action supports `.dmg`, `.pkg` file and `.app` folder.
 
 ## All inputs
 
-| Name           | Required | Default  | Description                                            |
-| :------------- | -------- | -------- | ------------------------------------------------------ |
-| `product-path` | `true`   | `""`     | Path to the product. Support `.dmg`, `.pkg` and `.app` |
-| `apple-id`     | `false`  | `""`     | Apple ID of the product's developer                    |
-| `app-password` | `false`  | `""`     | App specific password of the product                   |
-| `team-id`      | `false`  | `""`     | Developer team ID of the product                       |
-| `key-content`  | `false`  | `""`     | Content of the App Store Connect API key               |
-| `key-id`       | `false`  | `""`     | ID of the App Store Connect API key                    |
-| `issuer-id`    | `false`  | `""`     | ID of the App Store Connect API issuer                 |
-| `staple`       | `false`  | `"true"` | Whether to staple product or not                       |
+| Name             | Required  | Default    | Description                                                  |
+| :--------------- | --------- | ---------- | ------------------------------------------------------------ |
+| `product-path` | `true`  | `""`     | Path to the product. Support `.dmg`, `.pkg` and `.app` |
+| `apple-id`     | `false` | `""`     | Apple ID of the product's developer                          |
+| `app-password` | `false` | `""`     | App specific password of the product                         |
+| `team-id`      | `false` | `""`     | Developer team ID of the product                             |
+| `key-content`  | `false` | `""`     | Content of the App Store Connect API key                     |
+| `key-id`       | `false` | `""`     | ID of the App Store Connect API key                          |
+| `issuer-id`    | `false` | `""`     | ID of the App Store Connect API issuer                       |
+| `staple`       | `false` | `"true"` | Whether to staple product or not                             |
