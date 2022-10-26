@@ -90,7 +90,7 @@ runs:
             if package_path[-4:] == ".app":
                 print("Deleting temporary zip...")
                 os.remove(temp_file_path)
-            if key_base64 and key_id and issuer_id:
+            if key_content and key_id and issuer_id:
                 print("Deleting temp p8 file...")
                 os.remove(temp_key_path)
             print("Notarization succeeded!")
